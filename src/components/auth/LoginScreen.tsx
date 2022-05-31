@@ -1,34 +1,56 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "../../hooks/useForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   login,
   startLoginEmailPassword,
   startGoogleLogin,
 } from "../../actions/auth";
+import { setError, removeError } from "../../actions/ui";
+// import { AppDispatch } from "../../store/store";
+import { uiState } from "../../reducers/uiReducer";
 
 export const LoginScreen = () => {
-  const dispatch = useDispatch();
+  const { msgError, loading } = useSelector(
+    (state: any) => state.ui as uiState
+  );
+  const dispatch: any = useDispatch();
   const { onChange, email, password } = useForm({
-    email: "nando@gmail.com",
-    password: "123456789",
+    email: "",
+    password: "",
   });
 
-  const handleLogin = (e) => {
+  const handleLogin = (e: any) => {
     e.preventDefault();
-    // dispatch(login(12345, "Hernando"));
-    dispatch(startLoginEmailPassword(email, password));
+    if (isFormValid()) {
+      dispatch(startLoginEmailPassword(email, password));
+    }
   };
 
   const handleGoogleLogin = () => {
     dispatch(startGoogleLogin());
   };
 
+  const isFormValid = () => {
+    if (email.trim().length === 0) {
+      dispatch(setError("Email is required"));
+      return false;
+    }
+    if (password.trim().length === 0) {
+      dispatch(setError("Password is required"));
+      return false;
+    }
+
+    dispatch(removeError());
+    return true;
+  };
+
   return (
     <>
       <h3 className="auth__title">Login</h3>
       <form onSubmit={handleLogin}>
+        {msgError && <div className="auth__alert-error">{msgError}</div>}
         <input
           className="auth__input"
           type="text"
@@ -46,7 +68,11 @@ export const LoginScreen = () => {
           value={password}
           onChange={(value) => onChange(value.target.value, "password")}
         />
-        <button className="btn btn-primary btn-block" type="submit">
+        <button
+          className="btn btn-primary btn-block"
+          type="submit"
+          disabled={loading}
+        >
           Login
         </button>
         <div className="auth__social-netsworks">
@@ -64,7 +90,11 @@ export const LoginScreen = () => {
             </p>
           </div>
         </div>
-        <Link to="/auth/register" className="link">
+        <Link
+          to="/auth/register"
+          className="link"
+          onClick={() => dispatch(removeError())}
+        >
           Create new account
         </Link>
       </form>
