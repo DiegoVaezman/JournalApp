@@ -8,6 +8,7 @@ import { login } from "../../actions/auth";
 import { useState } from "react";
 import { PublicRoute } from "./PublicRoutes";
 import { PrivateRoute } from "./PrivateRoutes";
+import { startLoadNotes } from "../../actions/notes";
 
 export const AppRouter = () => {
   const dispatch: any = useDispatch();
@@ -20,6 +21,7 @@ export const AppRouter = () => {
       if (user?.uid) {
         dispatch(login(user.uid, user.displayName!));
         setIsLoggedIn(true);
+        dispatch(startLoadNotes(user.uid));
       } else {
         setIsLoggedIn(false);
       }
@@ -28,7 +30,7 @@ export const AppRouter = () => {
   }, []);
 
   if (checking) {
-    return <h1>Espere...</h1>;
+    return <h1>Wait...</h1>;
   }
 
   return (

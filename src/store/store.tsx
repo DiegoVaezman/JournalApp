@@ -1,6 +1,7 @@
 import { configureStore, applyMiddleware } from "@reduxjs/toolkit";
 import { authReducer } from "../reducers/authReducer";
 import { uiReducer } from "../reducers/uiReducer";
+import { notesReducer } from "../reducers/notesReducer";
 
 import thunk from "redux-thunk";
 import { useDispatch } from "react-redux";
@@ -9,6 +10,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     ui: uiReducer,
+    notes: notesReducer,
   },
 
   middleware: [thunk],
